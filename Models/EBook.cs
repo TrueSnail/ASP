@@ -4,13 +4,8 @@ namespace E_Book_Store.Models;
 
 public class EBook
 {
-    public EBook()
-    {
-        EBookId = new Guid();
-    }
-
     [Key]
-    public Guid EBookId { get; set; }
+    public string Id { get; set; }
     [Required]
     public required string Author { get; set; }
     [Required]
@@ -18,4 +13,9 @@ public class EBook
     public string? PathToContent { get; set; }
     [Required]
     public required decimal Price { get; set; }
+
+    public EBook()
+    {
+        Id = new Guid().ToString();
+    }
 }
