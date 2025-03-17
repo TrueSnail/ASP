@@ -1465,8 +1465,9 @@ $.extend( $.validator, {
 		},
 
 		// https://jqueryvalidation.org/number-method/
+		// Hand edited to include commas
 		number: function( value, element ) {
-			return this.optional( element ) || /^(?:-?\d+|-?\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test( value );
+			return this.optional( element ) || /^(?:-?\d+|-?\d{1,3}(?:,\d{3})+)?(?:(\,|\.)\d+)?$/.test( value );
 		},
 
 		// https://jqueryvalidation.org/digits-method/

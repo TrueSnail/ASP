@@ -17,6 +17,6 @@ public class EBookPurchase
 
     public EBookPurchase()
     {
-        Id = new Guid().ToString();
+        Id = Guid.NewGuid().ToString();
     }
 }
