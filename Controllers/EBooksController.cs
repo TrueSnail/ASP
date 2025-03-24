@@ -12,29 +12,31 @@ namespace E_Book_Store.Controllers
 {
     public class EBooksController : Controller
     {
-        private readonly EBookDbContext _context;
+        //private readonly EBookDbContext _context;
+        private readonly IRepository<EBook> EBookRepository;
 
-        public EBooksController(EBookDbContext context)
+        public EBooksController(IRepository<EBook> eBookRepository)
         {
-            _context = context;
+            //_context = context;
+            EBookRepository = eBookRepository;
         }
 
         // GET: EBooks
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.EBooks.ToListAsync());
+            return View(EBookRepository.GetAll());
         }
 
         // GET: EBooks/Details/5
-        public async Task<IActionResult> Details(string id)
+        public IActionResult Details(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var eBook = await _context.EBooks
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var eBook = EBookRepository.GetById(id);
+
             if (eBook == null)
             {
                 return NotFound();
@@ -52,26 +54,27 @@ namespace E_Book_Store.Controllers
         // POST: EBooks/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Author,Title,PathToContent,Price")] EBook eBook)
+        public IActionResult Create([Bind("Author,Title,PathToContent,Price")] EBook eBook)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(eBook);
-                await _context.SaveChangesAsync();
+                EBookRepository.Insert(eBook);
+                EBookRepository.Save();
                 return RedirectToAction(nameof(Index));
             }
             return View(eBook);
         }
 
         // GET: EBooks/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public IActionResult Edit(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var eBook = await _context.EBooks.FindAsync(id);
+            var eBook = EBookRepository.GetById(id);
+
             if (eBook == null)
             {
                 return NotFound();
@@ -82,7 +85,7 @@ namespace E_Book_Store.Controllers
         // POST: EBooks/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Author,Title,PathToContent,Price")] EBook eBook)
+        public IActionResult Edit(string id, [Bind("Id,Author,Title,PathToContent,Price")] EBook eBook)
         {
             if (id != eBook.Id)
             {
@@ -93,8 +96,8 @@ namespace E_Book_Store.Controllers
             {
                 try
                 {
-                    _context.Update(eBook);
-                    await _context.SaveChangesAsync();
+                    EBookRepository.Update(eBook);
+                    EBookRepository.Save();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -113,15 +116,15 @@ namespace E_Book_Store.Controllers
         }
 
         // GET: EBooks/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public IActionResult Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var eBook = await _context.EBooks
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var eBook = EBookRepository.GetById(id);
+
             if (eBook == null)
             {
                 return NotFound();
@@ -133,21 +136,22 @@ namespace E_Book_Store.Controllers
         // POST: EBooks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public IActionResult DeleteConfirmed(string id)
         {
-            var eBook = await _context.EBooks.FindAsync(id);
+            var eBook = EBookRepository.GetById(id);
             if (eBook != null)
             {
-                _context.EBooks.Remove(eBook);
+                EBookRepository.Delete(id);
             }
 
-            await _context.SaveChangesAsync();
+            EBookRepository.Save();
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool EBookExists(string id)
         {
-            return _context.EBooks.Any(e => e.Id == id);
+            return EBookRepository.GetById(id) != null;
         }
     }
 }

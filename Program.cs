@@ -1,4 +1,5 @@
 using E_Book_Store.Data;
+using E_Book_Store.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddDbContext<EBookDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddTransient<IRepository<EBook>, EntityFrameworkRepository<EBook>>();
 
 var app = builder.Build();
 
