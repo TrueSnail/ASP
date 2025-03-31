@@ -5,153 +5,81 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using E_Book_Store.Data;
 using E_Book_Store.Models;
+using E_Book_Store.Services;
 
-namespace E_Book_Store.Controllers
+namespace E_Book_Store.Controllers;
+
+public class EBooksController : Controller
 {
-    public class EBooksController : Controller
+    private readonly IEBooksService EBookService;
+
+    public EBooksController(IEBooksService eBookService)
     {
-        //private readonly EBookDbContext _context;
-        private readonly IRepository<EBook> EBookRepository;
+        EBookService = eBookService;
+    }
 
-        public EBooksController(IRepository<EBook> eBookRepository)
+    // GET: EBooks
+    public IActionResult Index() => View(EBookService.GetAll());
+
+    // GET: EBooks/Details/5
+    public IActionResult Details(string id)
+    {
+        var eBook = EBookService.GetById(id);
+        return eBook != null ? View(eBook) : NotFound();
+    }
+
+    // GET: EBooks/Create
+    public IActionResult Create() => View();
+
+    // POST: EBooks/Create
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Create([Bind("Author,Title,PathToContent,Price")] EBook eBook)
+    {
+        if (ModelState.IsValid)
         {
-            //_context = context;
-            EBookRepository = eBookRepository;
-        }
-
-        // GET: EBooks
-        public IActionResult Index()
-        {
-            return View(EBookRepository.GetAll());
-        }
-
-        // GET: EBooks/Details/5
-        public IActionResult Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eBook = EBookRepository.GetById(id);
-
-            if (eBook == null)
-            {
-                return NotFound();
-            }
-
-            return View(eBook);
-        }
-
-        // GET: EBooks/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: EBooks/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Author,Title,PathToContent,Price")] EBook eBook)
-        {
-            if (ModelState.IsValid)
-            {
-                EBookRepository.Insert(eBook);
-                EBookRepository.Save();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(eBook);
-        }
-
-        // GET: EBooks/Edit/5
-        public IActionResult Edit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eBook = EBookRepository.GetById(id);
-
-            if (eBook == null)
-            {
-                return NotFound();
-            }
-            return View(eBook);
-        }
-
-        // POST: EBooks/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, [Bind("Id,Author,Title,PathToContent,Price")] EBook eBook)
-        {
-            if (id != eBook.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    EBookRepository.Update(eBook);
-                    EBookRepository.Save();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EBookExists(eBook.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(eBook);
-        }
-
-        // GET: EBooks/Delete/5
-        public IActionResult Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eBook = EBookRepository.GetById(id);
-
-            if (eBook == null)
-            {
-                return NotFound();
-            }
-
-            return View(eBook);
-        }
-
-        // POST: EBooks/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id)
-        {
-            var eBook = EBookRepository.GetById(id);
-            if (eBook != null)
-            {
-                EBookRepository.Delete(id);
-            }
-
-            EBookRepository.Save();
-
+            EBookService.Create(eBook);
             return RedirectToAction(nameof(Index));
         }
+        return View(eBook);
+    }
 
-        private bool EBookExists(string id)
+    // GET: EBooks/Edit/5
+    public IActionResult Edit(string id)
+    {
+        var eBook = EBookService.GetById(id);
+        return eBook != null ? View(eBook) : NotFound();
+    }
+
+    // POST: EBooks/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(string id, [Bind("Id,Author,Title,PathToContent,Price")] EBook eBook)
+    {
+        if (id != eBook.Id) return NotFound();
+
+        if (ModelState.IsValid)
         {
-            return EBookRepository.GetById(id) != null;
+            EBookService.Update(eBook);
+            return RedirectToAction(nameof(Index));
         }
+        return View(eBook);
+    }
+
+    // GET: EBooks/Delete/5
+    public IActionResult Delete(string id)
+    {
+        var eBook = EBookService.GetById(id);
+        return eBook != null ? View(eBook) : NotFound();
+    }
+
+    // POST: EBooks/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeleteConfirmed(string id)
+    {
+        EBookService.Delete(id);
+        return RedirectToAction(nameof(Index));
     }
 }
