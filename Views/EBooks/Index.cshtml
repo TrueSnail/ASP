@@ -1,4 +1,5 @@
-﻿@model IEnumerable<E_Book_Store.Models.EBook>
+﻿@using E_Book_Store.ViewModels.EBooks
+@model EBooksIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -13,19 +14,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Author)
+                @Html.DisplayNameFor(model => new EBooksIndexItemViewModel().Author)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => new EBooksIndexItemViewModel().Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => new EBooksIndexItemViewModel().Price)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.EBooks) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Author)
