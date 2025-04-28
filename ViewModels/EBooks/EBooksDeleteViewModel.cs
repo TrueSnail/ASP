@@ -2,7 +2,7 @@
 
 namespace E_Book_Store.ViewModels.EBooks;
 
-public class EBooksDeleteViewModel : IViewModel, IViewModelFromModel<EBook>, IViewModelToModel<EBook>
+public class EBooksDeleteViewModel : IViewModelFromModel<EBook>, IViewModelToModel<EBook>
 {
     public string Id { get; set; } = "";
     public string Author { get; set; } = "";

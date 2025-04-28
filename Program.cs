@@ -1,6 +1,8 @@
 using E_Book_Store.Data;
 using E_Book_Store.Models;
 using E_Book_Store.Services;
+using E_Book_Store.Validation;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Configuration.AddJsonFile("secrets.json");
 builder.Services.AddControllersWithViews();
+builder.Services.AddValidatorsFromAssemblyContaining<EBookValidator>();
 builder.Services.AddDbContext<EBookDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));

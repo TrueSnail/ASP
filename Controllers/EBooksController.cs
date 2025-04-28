@@ -8,16 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using E_Book_Store.Models;
 using E_Book_Store.Services;
 using E_Book_Store.ViewModels.EBooks;
+using FluentValidation;
 
 namespace E_Book_Store.Controllers;
 
 public class EBooksController : Controller
 {
     private readonly IEBooksService EBookService;
+    private readonly IValidator<EBook> EBookValidator;
 
-    public EBooksController(IEBooksService eBookService)
+    public EBooksController(IEBooksService eBookService, IValidator<EBook> eBookValidator)
     {
         EBookService = eBookService;
+        EBookValidator = eBookValidator;
     }
 
     // GET: EBooks
@@ -39,12 +42,13 @@ public class EBooksController : Controller
     public IActionResult Create(EBooksCreateViewModel model)
     {
         EBook eBook = model.ToModel();
-        if (ModelState.IsValid)
+        var validationResult = EBookValidator.Validate(eBook);
+        if (validationResult.IsValid)
         {
             EBookService.Create(eBook);
             return RedirectToAction(nameof(Index));
         }
-        return View(eBook);
+        return View(model);
     }
 
     // GET: EBooks/Edit/5
@@ -61,12 +65,13 @@ public class EBooksController : Controller
     {
         EBook eBook = model.ToModel();
 
-        if (ModelState.IsValid)
+        var validationResult = EBookValidator.Validate(eBook);
+        if (validationResult.IsValid)
         {
             EBookService.Update(eBook);
             return RedirectToAction(nameof(Index));
         }
-        return View(eBook);
+        return View(model);
     }
 
     // GET: EBooks/Delete/5

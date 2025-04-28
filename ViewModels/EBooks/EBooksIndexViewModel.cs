@@ -2,7 +2,7 @@
 
 namespace E_Book_Store.ViewModels.EBooks;
 
-public class EBooksIndexViewModel : IViewModel, IViewModelFromModel<IEnumerable<EBook>>
+public class EBooksIndexViewModel : IViewModelFromModel<IEnumerable<EBook>>
 {
     public List<EBooksIndexItemViewModel> EBooks { get; set; } = new();
 

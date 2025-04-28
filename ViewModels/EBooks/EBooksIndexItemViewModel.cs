@@ -2,7 +2,7 @@
 
 namespace E_Book_Store.ViewModels.EBooks;
 
-public class EBooksIndexItemViewModel : IViewModel, IViewModelFromModel<EBook>
+public class EBooksIndexItemViewModel : IViewModelFromModel<EBook>
 {
     public string Id { get; set; } = "";
     public string Author { get; set; } = "";
