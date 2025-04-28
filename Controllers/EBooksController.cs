@@ -9,6 +9,7 @@ using E_Book_Store.Models;
 using E_Book_Store.Services;
 using E_Book_Store.ViewModels.EBooks;
 using FluentValidation;
+using FormHelper;
 
 namespace E_Book_Store.Controllers;
 
@@ -38,6 +39,7 @@ public class EBooksController : Controller
 
     // POST: EBooks/Create
     [HttpPost]
+    [FormValidator]
     [ValidateAntiForgeryToken]
     public IActionResult Create(EBooksCreateViewModel model)
     {
@@ -48,7 +50,7 @@ public class EBooksController : Controller
             EBookService.Create(eBook);
             return RedirectToAction(nameof(Index));
         }
-        return View(model);
+        return FormResult.CreateErrorResult(validationResult.Errors[0].ErrorMessage);
     }
 
     // GET: EBooks/Edit/5
@@ -60,6 +62,7 @@ public class EBooksController : Controller
 
     // POST: EBooks/Edit/5
     [HttpPost]
+    [FormValidator]
     [ValidateAntiForgeryToken]
     public IActionResult Edit(EBooksEditViewModel model)
     {
@@ -71,7 +74,7 @@ public class EBooksController : Controller
             EBookService.Update(eBook);
             return RedirectToAction(nameof(Index));
         }
-        return View(model);
+        return FormResult.CreateErrorResult(validationResult.Errors[0].ErrorMessage);
     }
 
     // GET: EBooks/Delete/5
