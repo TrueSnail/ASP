@@ -10,6 +10,7 @@ using E_Book_Store.Services;
 using E_Book_Store.ViewModels.EBooks;
 using FluentValidation;
 using FormHelper;
+using AutoMapper;
 
 namespace E_Book_Store.Controllers;
 
@@ -17,21 +18,23 @@ public class EBooksController : Controller
 {
     private readonly IEBooksService EBookService;
     private readonly IValidator<EBook> EBookValidator;
+    private readonly IMapper Mapper;
 
-    public EBooksController(IEBooksService eBookService, IValidator<EBook> eBookValidator)
+    public EBooksController(IEBooksService eBookService, IValidator<EBook> eBookValidator, IMapper mapper)
     {
         EBookService = eBookService;
         EBookValidator = eBookValidator;
+        Mapper = mapper;
     }
 
     // GET: EBooks
-    public IActionResult Index() => View(new EBooksIndexViewModel().FromModel(EBookService.GetAll()));
+    public IActionResult Index() => View(Mapper.Map<EBooksIndexViewModel>(EBookService.GetAll()));
 
     // GET: EBooks/Details/5
     public IActionResult Details(string id)
     {
         var eBook = EBookService.GetById(id);
-        return eBook != null ? View(new EBooksDetailsViewModel().FromModel(eBook)) : NotFound();
+        return eBook != null ? View(Mapper.Map<EBooksDetailsViewModel>(eBook)) : NotFound();
     }
 
     // GET: EBooks/Create
@@ -43,7 +46,7 @@ public class EBooksController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Create(EBooksCreateViewModel model)
     {
-        EBook eBook = model.ToModel();
+        EBook eBook = Mapper.Map<EBook>(model);
         var validationResult = EBookValidator.Validate(eBook);
         if (validationResult.IsValid)
         {
@@ -57,7 +60,7 @@ public class EBooksController : Controller
     public IActionResult Edit(string id)
     {
         var eBook = EBookService.GetById(id);
-        return eBook != null ? View(new EBooksEditViewModel().FromModel(eBook)) : NotFound();
+        return eBook != null ? View(Mapper.Map<EBooksEditViewModel>(eBook)) : NotFound();
     }
 
     // POST: EBooks/Edit/5
@@ -66,7 +69,7 @@ public class EBooksController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Edit(EBooksEditViewModel model)
     {
-        EBook eBook = model.ToModel();
+        EBook eBook = Mapper.Map<EBook>(model);
 
         var validationResult = EBookValidator.Validate(eBook);
         if (validationResult.IsValid)
@@ -81,7 +84,7 @@ public class EBooksController : Controller
     public IActionResult Delete(string id)
     {
         var eBook = EBookService.GetById(id);
-        return eBook != null ? View(new EBooksDeleteViewModel().FromModel(eBook)) : NotFound();
+        return eBook != null ? View(Mapper.Map<EBooksDeleteViewModel>(eBook)) : NotFound();
     }
 
     // POST: EBooks/Delete/5

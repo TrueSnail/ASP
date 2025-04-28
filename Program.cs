@@ -2,6 +2,7 @@ using E_Book_Store.Data;
 using E_Book_Store.Models;
 using E_Book_Store.Services;
 using E_Book_Store.Validation;
+using E_Book_Store.ViewModels.EBooks;
 using FluentValidation;
 using FormHelper;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,18 @@ builder.Services.AddValidatorsFromAssemblyContaining<EBookValidator>();
 builder.Services.AddDbContext<EBookDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.CreateMap<EBooksCreateViewModel, EBook>();
+    cfg.CreateMap<EBooksDeleteViewModel, EBook>();
+    cfg.CreateMap<EBook, EBooksDeleteViewModel>();
+    cfg.CreateMap<EBook, EBooksDetailsViewModel>();
+    cfg.CreateMap<EBooksDetailsViewModel, EBook>();
+    cfg.CreateMap<EBook, EBooksEditViewModel>();
+    cfg.CreateMap<EBooksEditViewModel, EBook>();
+    cfg.CreateMap<EBook, EBooksIndexItemViewModel>();
+    cfg.CreateMap<IEnumerable<EBook>, EBooksIndexViewModel>().ForMember(dest => dest.EBooks, opt => opt.MapFrom(src => src));
 });
 builder.Services.AddTransient<IRepository<EBook>, EntityFrameworkRepository<EBook>>();
 builder.Services.AddTransient<IEBooksService, EBooksService>();
