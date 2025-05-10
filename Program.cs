@@ -6,6 +6,7 @@ using E_Book_Store.ViewModels.EBooks;
 using FluentValidation;
 using FormHelper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,9 @@ builder.Services.AddDbContext<EBookDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddRazorPages();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<EBookDbContext>();
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.CreateMap<EBooksCreateViewModel, EBook>();
@@ -44,6 +48,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.MapRazorPages();
 
 app.UseRouting();
 

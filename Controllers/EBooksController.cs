@@ -11,9 +11,11 @@ using E_Book_Store.ViewModels.EBooks;
 using FluentValidation;
 using FormHelper;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_Book_Store.Controllers;
 
+[Authorize]
 public class EBooksController : Controller
 {
     private readonly IEBooksService EBookService;
@@ -28,6 +30,7 @@ public class EBooksController : Controller
     }
 
     // GET: EBooks
+    [AllowAnonymous]
     public IActionResult Index() => View(Mapper.Map<EBooksIndexViewModel>(EBookService.GetAll()));
 
     // GET: EBooks/Details/5
