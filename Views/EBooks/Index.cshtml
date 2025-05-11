@@ -1,15 +1,20 @@
 ﻿@using E_Book_Store.ViewModels.EBooks
+
 @model EBooksIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
+    bool isEbookEditor = User.IsInRole(Roles.EBookEditor);
 }
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (isEbookEditor)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -26,23 +31,33 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.EBooks) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.EBooks)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @if (isEbookEditor)
+                    {
+                        <text>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id"> Details </a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id"> Delete </a>
+                        </text>
+                    }
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id"> Details </a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

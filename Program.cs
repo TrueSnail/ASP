@@ -20,7 +20,9 @@ builder.Services.AddDbContext<EBookDbContext>(options =>
 });
 
 builder.Services.AddRazorPages();
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<EBookDbContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<EBookDbContext>();
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.CreateMap<EBooksCreateViewModel, EBook>();

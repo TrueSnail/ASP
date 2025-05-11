@@ -30,7 +30,6 @@ public class EBooksController : Controller
     }
 
     // GET: EBooks
-    [AllowAnonymous]
     public IActionResult Index() => View(Mapper.Map<EBooksIndexViewModel>(EBookService.GetAll()));
 
     // GET: EBooks/Details/5
@@ -41,12 +40,14 @@ public class EBooksController : Controller
     }
 
     // GET: EBooks/Create
+    [Authorize(Roles = Roles.EBookEditor)]
     public IActionResult Create() => View();
 
     // POST: EBooks/Create
     [HttpPost]
     [FormValidator]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.EBookEditor)]
     public IActionResult Create(EBooksCreateViewModel model)
     {
         EBook eBook = Mapper.Map<EBook>(model);
@@ -60,6 +61,7 @@ public class EBooksController : Controller
     }
 
     // GET: EBooks/Edit/5
+    [Authorize(Roles = Roles.EBookEditor)]
     public IActionResult Edit(string id)
     {
         var eBook = EBookService.GetById(id);
@@ -70,6 +72,7 @@ public class EBooksController : Controller
     [HttpPost]
     [FormValidator]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.EBookEditor)]
     public IActionResult Edit(EBooksEditViewModel model)
     {
         EBook eBook = Mapper.Map<EBook>(model);
@@ -84,6 +87,7 @@ public class EBooksController : Controller
     }
 
     // GET: EBooks/Delete/5
+    [Authorize(Roles = Roles.EBookEditor)]
     public IActionResult Delete(string id)
     {
         var eBook = EBookService.GetById(id);
@@ -93,6 +97,7 @@ public class EBooksController : Controller
     // POST: EBooks/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.EBookEditor)]
     public IActionResult DeleteConfirmed(EBooksDeleteViewModel model)
     {
         EBookService.Delete(model.Id);
