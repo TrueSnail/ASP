@@ -1,6 +1,7 @@
 ﻿namespace E_Book_Store;
 
-public static class Roles
+public enum Roles
 {
-    public const string EBookEditor = "EBookEditor";
+    EBookEditor,
+    Admin
 }

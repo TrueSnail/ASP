@@ -4,7 +4,7 @@
 
 @{
     ViewData["Title"] = "E-Books";
-    bool isEbookEditor = User.IsInRole(Roles.EBookEditor);
+    bool isEbookEditor = User.IsInRole(nameof(Roles.EBookEditor));
 }
 
 <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">

@@ -12,4 +12,5 @@ public interface IEBooksService
     public void Delete(string Id);
     public void Buy(string ebookId, string? userId);
     public IEnumerable<EBook> GetNotBought(string userId);
+    public int GetEbookCount();
 }

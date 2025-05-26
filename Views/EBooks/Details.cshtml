@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
-    bool isEbookEditor = User.IsInRole(Roles.EBookEditor);
+    bool isEbookEditor = User.IsInRole(nameof(Roles.EBookEditor));
 }
 
 <h1>Details</h1>

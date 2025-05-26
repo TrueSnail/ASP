@@ -30,6 +30,8 @@ public class EBooksService : IEBooksService
 
     public IEnumerable<EBook> GetAll() => EBookRepository.GetAll();
 
+    public int GetEbookCount() => EBookRepository.GetAll().Count();
+
     public IEnumerable<EBook> GetNotBought(string userId)
     {
         var purchases = EBookPurchaseRepository.GetAll().Where(p => p.UserId == userId);
