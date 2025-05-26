@@ -36,7 +36,9 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<IEnumerable<EBook>, EBooksIndexViewModel>().ForMember(dest => dest.EBooks, opt => opt.MapFrom(src => src));
 });
 builder.Services.AddTransient<IRepository<EBook>, EntityFrameworkRepository<EBook>>();
+builder.Services.AddTransient<IRepository<EBookPurchase>, EntityFrameworkRepository<EBookPurchase>>();
 builder.Services.AddTransient<IEBooksService, EBooksService>();
+builder.Services.AddTransient<IEBooksContentService, EBooksContentService>();
 
 var app = builder.Build();
 

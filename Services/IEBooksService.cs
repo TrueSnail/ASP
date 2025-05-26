@@ -10,4 +10,6 @@ public interface IEBooksService
     public void Create(EBook eBook);
     public void Update(EBook eBook);
     public void Delete(string Id);
+    public void Buy(string ebookId, string? userId);
+    public IEnumerable<EBook> GetNotBought(string userId);
 }

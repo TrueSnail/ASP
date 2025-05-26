@@ -12,6 +12,7 @@ using FluentValidation;
 using FormHelper;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace E_Book_Store.Controllers;
 
@@ -19,24 +20,30 @@ namespace E_Book_Store.Controllers;
 public class EBooksController : Controller
 {
     private readonly IEBooksService EBookService;
+    private readonly IEBooksContentService EBookContentService;
     private readonly IValidator<EBook> EBookValidator;
     private readonly IMapper Mapper;
+    private readonly UserManager<IdentityUser> UserManager;
 
-    public EBooksController(IEBooksService eBookService, IValidator<EBook> eBookValidator, IMapper mapper)
+    public EBooksController(IEBooksService eBookService, IEBooksContentService ebookContentService, IValidator<EBook> eBookValidator, IMapper mapper, UserManager<IdentityUser> userManager)
     {
         EBookService = eBookService;
+        EBookContentService = ebookContentService;
         EBookValidator = eBookValidator;
         Mapper = mapper;
+        UserManager = userManager;
     }
 
     // GET: EBooks
-    public IActionResult Index() => View(Mapper.Map<EBooksIndexViewModel>(EBookService.GetAll()));
+    public IActionResult Index() => View(Mapper.Map<EBooksIndexViewModel>(EBookService.GetNotBought(UserManager.GetUserId(User)!)));
 
-    // GET: EBooks/Details/5
-    public IActionResult Details(string id)
+    // GET: EBooks/Buy/5
+    public IActionResult Buy(string id)
     {
-        var eBook = EBookService.GetById(id);
-        return eBook != null ? View(Mapper.Map<EBooksDetailsViewModel>(eBook)) : NotFound();
+        EBookService.Buy(id, UserManager.GetUserId(User));
+        //var eBook = EBookService.GetById(id);
+        //return eBook != null ? View(Mapper.Map<EBooksDetailsViewModel>(eBook)) : NotFound();
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: EBooks/Create
@@ -55,6 +62,7 @@ public class EBooksController : Controller
         if (validationResult.IsValid)
         {
             EBookService.Create(eBook);
+            if (!string.IsNullOrEmpty(model.Content)) EBookContentService.SetContent(eBook, model.Content);
             return RedirectToAction(nameof(Index));
         }
         return FormResult.CreateErrorResult(validationResult.Errors[0].ErrorMessage);
@@ -81,6 +89,7 @@ public class EBooksController : Controller
         if (validationResult.IsValid)
         {
             EBookService.Update(eBook);
+            if (!string.IsNullOrEmpty(model.Content)) EBookContentService.SetContent(eBook, model.Content);
             return RedirectToAction(nameof(Index));
         }
         return FormResult.CreateErrorResult(validationResult.Errors[0].ErrorMessage);
@@ -100,6 +109,7 @@ public class EBooksController : Controller
     [Authorize(Roles = Roles.EBookEditor)]
     public IActionResult DeleteConfirmed(EBooksDeleteViewModel model)
     {
+        EBookContentService.DeleteContent(EBookService.GetById(model.Id)!);
         EBookService.Delete(model.Id);
         return RedirectToAction(nameof(Index));
     }

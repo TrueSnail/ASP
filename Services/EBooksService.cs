@@ -1,15 +1,18 @@
 ﻿using E_Book_Store.Data;
 using E_Book_Store.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace E_Book_Store.Services;
 
 public class EBooksService : IEBooksService
 {
     private readonly IRepository<EBook> EBookRepository;
+    private readonly IRepository<EBookPurchase> EBookPurchaseRepository;
 
-    public EBooksService(IRepository<EBook> eBookRepository)
+    public EBooksService(IRepository<EBook> eBookRepository, IRepository<EBookPurchase> eBookPurchaseRepository)
     {
         EBookRepository = eBookRepository;
+        EBookPurchaseRepository = eBookPurchaseRepository;
     }
 
     public void Create(EBook eBook)
@@ -27,6 +30,12 @@ public class EBooksService : IEBooksService
 
     public IEnumerable<EBook> GetAll() => EBookRepository.GetAll();
 
+    public IEnumerable<EBook> GetNotBought(string userId)
+    {
+        var purchases = EBookPurchaseRepository.GetAll().Where(p => p.UserId == userId);
+        return EBookRepository.GetAll().Where(b => !purchases.Select(p => p.EBookId).Contains(b.Id));
+    }
+
     public EBook? GetById(string Id)
     {
         if (string.IsNullOrEmpty(Id)) return null;
@@ -39,5 +48,13 @@ public class EBooksService : IEBooksService
     {
         EBookRepository.Update(eBook);
         EBookRepository.Save();
+    }
+
+    public void Buy(string ebookId, string? userId)
+    {
+        EBook? eBook = GetById(ebookId) ?? throw new Exception("Could not retrive EBook by ID");
+        EBookPurchase purchase = new EBookPurchase() { EBookId = eBook.Id, PurchasePrice = eBook.Price, PurchaseTimestamp = DateTime.UtcNow, UserId = userId};
+        EBookPurchaseRepository.Insert(purchase);
+        EBookPurchaseRepository.Save();
     }
 }
