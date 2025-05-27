@@ -7,12 +7,28 @@ using FluentValidation;
 using FormHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var supportedCultures = new[]
+{
+    new CultureInfo("en-US"),
+    new CultureInfo("pl-PL"),
+    new CultureInfo("it-IT")
+};
+
 // Add services to the container.
 builder.Configuration.AddJsonFile("secrets.json");
-builder.Services.AddControllersWithViews().AddFormHelper();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("pl-PL");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+builder.Services.AddControllersWithViews()/*.AddFormHelper()*/.AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddValidatorsFromAssemblyContaining<EBookValidator>();
 builder.Services.AddDbContext<EBookDbContext>(options =>
 {
@@ -49,6 +65,15 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseRequestLocalization();
+//app.UseRequestLocalization(new RequestLocalizationOptions()
+//{
+//    DefaultRequestCulture = new RequestCulture("pl-PL"),
+//    SupportedCultures = supportedCultures,
+//    SupportedUICultures = supportedCultures
+//});
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -18,7 +18,7 @@ public class EBooksContentService : IEBooksContentService
     {
         if (eBook.PathToContent != null)
         {
-            File.Delete(eBook.PathToContent);
+            File.Delete(PATH_PREFIX + eBook.PathToContent);
             eBook.PathToContent = null;
             EBookRepository.Update(eBook);
             EBookRepository.Save();
@@ -28,15 +28,15 @@ public class EBooksContentService : IEBooksContentService
     public string GetContent(EBook eBook)
     {
         if (eBook.PathToContent == null) return "";
-        else return File.ReadAllText(eBook.PathToContent);
+        else return File.ReadAllText(PATH_PREFIX + eBook.PathToContent);
     }
 
     public void SetContent(EBook eBook, string content)
     {
-        string? PathToContent = eBook.PathToContent;
-        if (PathToContent == null)
+        string PathToContent = PATH_PREFIX + eBook.PathToContent;
+        if (eBook.PathToContent == null)
         {
-            PathToContent = Environment.CurrentDirectory + PATH_PREFIX + eBook.Id + ".txt";
+            PathToContent = PATH_PREFIX + eBook.Id + ".txt";
             eBook.PathToContent = PathToContent;
             EBookRepository.Update(eBook);
             EBookRepository.Save();
