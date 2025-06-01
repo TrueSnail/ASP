@@ -41,8 +41,6 @@ public class EBooksController : Controller
     public IActionResult Buy(string id)
     {
         EBookService.Buy(id, UserManager.GetUserId(User));
-        //var eBook = EBookService.GetById(id);
-        //return eBook != null ? View(Mapper.Map<EBooksDetailsViewModel>(eBook)) : NotFound();
         return RedirectToAction(nameof(Index));
     }
 
