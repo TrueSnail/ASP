@@ -11,6 +11,7 @@ public interface IEBooksService
     public void Update(EBook eBook);
     public void Delete(string Id);
     public void Buy(string ebookId, string? userId);
-    public IEnumerable<EBook> GetNotBought(string userId);
+    public IEnumerable<EBook> GetByBought(string userId, bool areBought);
+    bool IsBought(string ebookId, string userId);
     public int GetEbookCount();
 }

@@ -15,7 +15,7 @@ namespace E_Book_Tests;
 public class EBooksControllerTests
 {
     [Fact]
-    public void IndexTest()
+    public void BuyTest()
     {
         //Arrange
         const string USER_ID = "123";

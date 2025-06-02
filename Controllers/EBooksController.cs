@@ -35,7 +35,18 @@ public class EBooksController : Controller
     }
 
     // GET: EBooks
-    public IActionResult Index() => View(Mapper.Map<EBooksIndexViewModel>(EBookService.GetNotBought(UserManager.GetUserId(User)!)));
+    //public IActionResult Index() => View(Mapper.Map<EBooksIndexViewModel>(EBookService.GetByBought(UserManager.GetUserId(User)!, false)));
+    public IActionResult Index()
+    {
+        if (User.IsInRole(nameof(Roles.EBookEditor)))
+        {
+            return View(new EBooksIndexViewModel() { EBooks = EBookService.GetAll().ToList().Select(ebook => new EBooksIndexItemViewModel() { Id = ebook.Id, Author = ebook.Author, Price = ebook.Price, Title = ebook.Title, Bought = EBookService.IsBought(ebook.Id, UserManager.GetUserId(User)!) }).ToList() });
+        }
+        else
+        {
+            return View(Mapper.Map<EBooksIndexViewModel>(EBookService.GetByBought(UserManager.GetUserId(User)!, false)));
+        }
+    }
 
     // GET: EBooks/Buy/5
     public IActionResult Buy(string id)
